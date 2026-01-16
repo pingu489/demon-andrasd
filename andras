@@ -1,0 +1,33 @@
+#!/bin/bash
+# andrasd : Demonio de integridad de archivos críticos
+# Autor: Oscar
+ 
+RED="\e[31m"
+FILES=("/etc/passwd" "/etc/shadow" "/etc/sudoers")
+ 
+ 
+HASHFILE="/var/tmp/andrasd_hashes.txt"
+LOGFILE="/var/log/andrasd.log"
+ 
+# contador
+INTERVAL=500
+ 
+ 
+hash_file() {
+    sha256sum "$1" | awk '{print $1}'
+}
+ 
+ 
+if [ ! -f "$HASHFILE" ]; then
+    echo -e "${RED}[INFO] Inicializando hashes..." | tee -a "$LOGFILE"
+    > "$HASHFILE"
+    for f in "${FILES[@]}"; do
+        h=$(hash_file "$f")
+        echo "$f $h" >> "$HASHFILE"
+    done
+fi
+ 
+echo -e "${RED}[INFO] Demonio Andrasd invocado." | tee -a "$LOGFILE"
+ 
+# Bucle infinito de vigilancia
+while true; do
