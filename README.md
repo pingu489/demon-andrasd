@@ -56,3 +56,6 @@ chmod +x andrasd.sh
 # Ejecutar el demonio
 ./andrasd.sh
 
+# Matar el demonio
+pkill -f andrasd
+
